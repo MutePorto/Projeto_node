@@ -5,7 +5,8 @@ const app = express()
 const port = 3000
 let path = require('path')
 
-app.use(session({ secret: 'meuSegredo', resave: false }))
+app.use(session({ secret: 'meuSegredo', resave: false, saveUninitialized: true }))
+app.use(express.json())
 
 app.engine('html', require('ejs').renderFile)
 app.set('view engine', 'html')
@@ -16,19 +17,23 @@ app.set('views', path.join(__dirname, 'views'))
 
 
 app.get('/', (req, res) => {
-  ;
+  req.session.destroy()
+  req.session = null
   res.render('index');
 
 })
 
 app.post('/', (req, res) => {
   const { nome, senha } = req.body
-  req.session.nome = nome
-  req.session.senha = senha
-  if (req.session.nome == 'admin' && req.session.senha == '123') {
+
+  if (nome == 'marcos' && senha == '123') {
+    req.session.nome = nome
+    req.session.senha = senha
     res.render('home', { nome: req.session.nome })
   }
   else {
+    req.session.destroy()
+    req.session = null
     res.redirect('/')
   }
 
