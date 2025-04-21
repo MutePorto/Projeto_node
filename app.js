@@ -19,12 +19,13 @@ app.set('views', path.join(__dirname, 'views'))
 app.get('/', (req, res) => {
   req.session.destroy()
   req.session = null
-  res.render('index');
+  res.render('index', { erro: null });
 
 })
 
 app.post('/', (req, res) => {
   const { nome, senha } = req.body
+
 
   if (nome == 'marcos' && senha == '123') {
     req.session.nome = nome
@@ -34,7 +35,7 @@ app.post('/', (req, res) => {
   else {
     req.session.destroy()
     req.session = null
-    res.redirect('/')
+    return res.render('index', { erro: 'Usuário ou senha inválidos' });
   }
 
 })
